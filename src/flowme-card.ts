@@ -1,4 +1,4 @@
-import { LitElement, html, css, type PropertyValues, type TemplateResult } from 'lit';
+import { LitElement, html, css, nothing, type PropertyValues, type TemplateResult } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { createRef, ref, type Ref } from 'lit/directives/ref.js';
 
@@ -16,7 +16,14 @@ import { createRenderer } from './animation/renderer-factory.js';
 import { SvgRenderer } from './animation/svg-renderer.js';
 import type { FlowRenderer } from './animation/types.js';
 import { getProfile, NEUTRAL_NODE_COLOR, resolveFlowColor } from './flow-profiles/index.js';
-import { interpolateGradientColor, parseAspectRatio, parseSensorValue, resolveNightBackground, scaleSensorValue } from './utils.js';
+import {
+  interpolateGradientColor,
+  isVideoUrl,
+  parseAspectRatio,
+  parseSensorValue,
+  resolveNightBackground,
+  scaleSensorValue,
+} from './utils.js';
 import { renderOverlayHost } from './overlays/render.js';
 import type { FlowmeCustomOverlay } from './overlays/custom-overlay.js';
 import './overlays/custom-overlay.js';
@@ -820,18 +827,18 @@ export class FlowmeCard extends LitElement {
           class="stage"
           style=${`padding-top: ${paddingTop};${opacityVars}`}
         >
-          <div
-            class=${`background ${this.activeLayer === 'A' ? 'visible' : ''}`}
-            style=${suppressCardBackground
-              ? 'opacity:0;pointer-events:none;'
-              : this.buildLayerStyle(this.bgLayerA, transitionMs)}
-          ></div>
-          <div
-            class=${`background ${this.activeLayer === 'B' ? 'visible' : ''}`}
-            style=${suppressCardBackground
-              ? 'opacity:0;pointer-events:none;'
-              : this.buildLayerStyle(this.bgLayerB, transitionMs)}
-          ></div>
+          ${this.renderBackgroundLayer(
+            this.bgLayerA,
+            this.activeLayer === 'A',
+            transitionMs,
+            suppressCardBackground,
+          )}
+          ${this.renderBackgroundLayer(
+            this.bgLayerB,
+            this.activeLayer === 'B',
+            transitionMs,
+            suppressCardBackground,
+          )}
           <div class="renderer-mount" ${ref(this.rendererMount)}></div>
           <svg
             class="node-effects-svg"
@@ -896,9 +903,47 @@ export class FlowmeCard extends LitElement {
   }
 
   private buildLayerStyle(url: string, transitionMs: number): string {
-    const bg = url ? `background-image: url('${url}');` : '';
+    const bg = url && !isVideoUrl(url) ? `background-image: url('${url}');` : '';
     return `${bg} transition-duration: ${transitionMs}ms;`;
   }
+
+  private renderBackgroundLayer(
+    url: string,
+    visible: boolean,
+    transitionMs: number,
+    suppress: boolean,
+  ): TemplateResult {
+    if (suppress) {
+      return html`<div class="background" style="opacity:0;pointer-events:none;"></div>`;
+    }
+    const video = isVideoUrl(url);
+    const instant = video || isVideoUrl(this.lastAppliedBgUrl);
+    const layerTransitionMs = instant ? 0 : transitionMs;
+    return html`
+      <div
+        class=${`background ${visible ? 'visible' : ''}`}
+        style=${this.buildLayerStyle(url, layerTransitionMs)}
+      >
+        ${video
+          ? html`<video
+              class="background-video"
+              src=${url}
+              autoplay
+              loop
+              muted
+              playsinline
+              ${ref(this.backgroundVideoRef)}
+            ></video>`
+          : nothing}
+      </div>
+    `;
+  }
+
+  private backgroundVideoRef = (el?: Element): void => {
+    const video = el as HTMLVideoElement | undefined;
+    if (!video) return;
+    void video.play().catch(() => {});
+  };
 
   private resolveTargetBackground(): string {
     const bg = this.config?.background;
@@ -941,24 +986,35 @@ export class FlowmeCard extends LitElement {
 
     const transitionMs =
       this.config.background.transition_duration ?? DEFAULT_TRANSITION_MS;
+    const instantCut = isVideoUrl(target) || isVideoUrl(this.lastAppliedBgUrl);
     void this.preload(target).then(() => {
       // config may have changed while preloading
       if (!this.config || this.resolveTargetBackground() !== target) return;
 
       if (this.transitionTimer !== null) {
         window.clearTimeout(this.transitionTimer);
+        this.transitionTimer = null;
       }
 
       const incoming: 'A' | 'B' = this.activeLayer === 'A' ? 'B' : 'A';
       if (incoming === 'A') this.bgLayerA = target;
       else this.bgLayerB = target;
 
+      if (instantCut) {
+        requestAnimationFrame(() => {
+          this.activeLayer = incoming;
+          this.lastAppliedBgUrl = target;
+          if (this.activeLayer === 'A') this.bgLayerB = '';
+          else this.bgLayerA = '';
+        });
+        return;
+      }
+
       // force a frame so the inactive layer picks up the new image before we flip opacity
       requestAnimationFrame(() => {
         this.activeLayer = incoming;
         this.lastAppliedBgUrl = target;
         this.transitionTimer = window.setTimeout(() => {
-          // clear the now-hidden layer so it can accept the next swap without flash
           if (this.activeLayer === 'A') this.bgLayerB = '';
           else this.bgLayerA = '';
           this.transitionTimer = null;
@@ -968,7 +1024,7 @@ export class FlowmeCard extends LitElement {
   }
 
   private preload(url: string): Promise<void> {
-    if (!url) return Promise.resolve();
+    if (!url || isVideoUrl(url)) return Promise.resolve();
     const cached = this.preloadCache.get(url);
     if (cached?.complete && cached.naturalWidth > 0) return Promise.resolve();
     return new Promise((resolve) => {
@@ -1123,6 +1179,13 @@ export class FlowmeCard extends LitElement {
     }
     .background.visible {
       opacity: var(--flowme-opacity-bg, 1);
+    }
+    .background-video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
     .stage::after {
       content: '';

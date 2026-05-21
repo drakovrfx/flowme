@@ -2,6 +2,11 @@ import { buildCostGrid, DEFAULT_CELL_SIZE } from './grid-builder.js';
 import { buildEdgeMap, readDownscaledPixels } from './sobel.js';
 import { waypointsForGrid } from './compute-waypoints.js';
 import type { CostGrid, PathRequest, PathResult } from './types.js';
+import { isVideoUrl } from '../utils.js';
+
+const SUGGEST_PATH_VIDEO_ERROR =
+  'Suggest Path is not available for video backgrounds. ' +
+  'Set a static image as background to use this feature.';
 
 /**
  * High-level auto-routing façade. Given a background image URL and two
@@ -24,6 +29,9 @@ export async function suggestPath(
   request: PathRequest,
   options: SuggestPathOptions = {},
 ): Promise<PathResult> {
+  if (isVideoUrl(request.imageUrl)) {
+    throw new Error(SUGGEST_PATH_VIDEO_ERROR);
+  }
   const startedAt = performance.now();
   const cellSize = options.cellSize ?? DEFAULT_CELL_SIZE;
   const cacheKey = `${request.imageUrl}|${cellSize}`;
@@ -61,6 +69,9 @@ export async function suggestPath(
 export async function loadDownscaledRgbaForPathfinding(
   imageUrl: string,
 ): Promise<{ rgba: Uint8ClampedArray; width: number; height: number } | null> {
+  if (isVideoUrl(imageUrl)) {
+    throw new Error(SUGGEST_PATH_VIDEO_ERROR);
+  }
   if (!imageUrl) return null;
   try {
     const img = await loadImage(imageUrl);
@@ -85,6 +96,9 @@ function getGrid(cacheKey: string, url: string, cellSize: number): Promise<CostG
 }
 
 async function buildGrid(url: string, cellSize: number): Promise<CostGrid> {
+  if (isVideoUrl(url)) {
+    throw new Error(SUGGEST_PATH_VIDEO_ERROR);
+  }
   const img = await loadImage(url);
   // yield once so we never block a whole frame running Sobel synchronously
   await microYield();

@@ -34,6 +34,7 @@ import {
   DEFAULT_ZERO_THRESHOLD,
   flowDisplayName,
   interpolateGradientColor,
+  isVideoUrl,
   polylineToSvgPathStyled,
   resolveAnimTiming,
 } from './utils.js';
@@ -108,7 +109,19 @@ import PathfindingWorker from './pathfinding/pathfinding.worker.ts?worker&inline
 
 const IMAGE_BROWSER_NOT_CONFIGURED = 'not_configured';
 
-const IMAGE_BROWSER_EXTS = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg', '.avif'];
+const IMAGE_BROWSER_EXTS = [
+  '.jpg',
+  '.jpeg',
+  '.png',
+  '.gif',
+  '.webp',
+  '.svg',
+  '.avif',
+  '.mp4',
+  '.webm',
+  '.mov',
+  '.m4v',
+];
 
 type DragTarget =
   | { kind: 'node'; id: string }
@@ -3838,6 +3851,15 @@ export class FlowmeCardEditor extends LitElement {
     }
 
     const imageUrl = this.config.background?.default ?? '';
+
+    if (isVideoUrl(imageUrl)) {
+      this.errorMessage = t(
+        'editor.inspector.suggestAutoRouteFailed',
+        'Suggest Path is not available for video backgrounds. Set a static image as background to use this feature.',
+      );
+      this.suggestPreview = null;
+      return;
+    }
 
     if (typeof Worker === 'undefined') {
       await this.runPathfindingMainThread(fromId, toId, { logFallback: true });
