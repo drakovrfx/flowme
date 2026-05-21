@@ -2,6 +2,12 @@
 
 All notable changes to flowme are documented here. Format loosely follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [2.11.0]
+
+### Added
+
+- **Video backgrounds:** FlowMe now supports looping video files as backgrounds (`.mp4`, `.webm`, `.mov`, `.m4v`). Videos play muted and loop automatically. Works with `background.default` and `background.weather_states` for weather-reactive video switching. H.264 MP4 is recommended for hardware decoding on older devices. Suggest Path is disabled when a video background is active — set a static image temporarily to use it. Crossfade transitions are not applied when switching to or from a video background (clean cut). Video files appear in the editor image browser alongside image formats.
+
 ## [2.10.8]
 
 ### Fixed
