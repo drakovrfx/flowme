@@ -711,6 +711,16 @@ export function interpolateGradientColor(value: number, config: ValueGradientCon
   return hslToHex(h, s, l);
 }
 
+/** File extensions treated as video backgrounds (looping `<video>` layer). */
+export const VIDEO_EXTENSIONS = ['.mp4', '.webm', '.mov', '.m4v'];
+
+/** True when `url` points at a supported video background format. */
+export function isVideoUrl(url: string): boolean {
+  if (!url) return false;
+  const lower = url.toLowerCase().split('?')[0] ?? '';
+  return VIDEO_EXTENSIONS.some((ext) => lower.endsWith(ext));
+}
+
 /** True when the user prefers minimal motion (OS / browser setting). */
 export function prefersReducedMotion(): boolean {
   try {

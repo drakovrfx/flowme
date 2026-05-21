@@ -188,6 +188,10 @@ background:
 
 Suggested upper bounds for smooth performance: GIF under 2MB; animated WebP under 1MB; APNG under 1MB (WebP often looks better than GIF at a smaller size).
 
+### Video backgrounds
+
+FlowMe supports video files (`.mp4`, `.webm`, `.mov`, `.m4v`) as backgrounds. Videos loop automatically, play muted, and work with weather-reactive switching. H.264 MP4 is recommended for the best hardware decoding support on older devices. See `FEATURES.md` for full details.
+
 ---
 
 ## Configuration

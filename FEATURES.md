@@ -28,6 +28,29 @@ GIF, animated WebP, and APNG files work as ordinary background images (browser/C
 
 Rough file-size guidance: GIF < 2MB; animated WebP < 1MB; APNG < 1MB.
 
+### Video backgrounds
+
+MP4 and other video formats are supported as background sources.
+Supported formats: `.mp4`, `.webm`, `.mov`, `.m4v`.
+
+Store video files in `/config/www/flowme-backgrounds/` and reference
+them as `/local/flowme-backgrounds/filename.mp4`.
+
+Practical guidance:
+- Aim for a **3–5 second** seamless loop
+- Keep files under **5MB** for smooth playback on low-powered devices
+- H.264 MP4 is recommended for widest hardware decoding support,
+  especially on older Android tablets and low-powered devices
+- Videos play muted and loop automatically
+- Weather-reactive switching works the same as with images
+
+**Note:** Suggest Path is not available when a video is set as the
+background. Set a static image temporarily to use Suggest Path,
+then switch back to your video.
+
+**Crossfade transitions** are not applied when switching to or from
+a video background — the switch is a clean cut.
+
 ### Generating custom animated backgrounds
 
 AI video tools can produce seamless looping clips tailored to your space. Options to explore:

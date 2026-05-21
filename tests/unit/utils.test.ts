@@ -14,7 +14,37 @@ import {
   scaleSensorValue,
   debounce,
   parseAspectRatio,
+  isVideoUrl,
 } from '../../src/utils.js';
+
+describe('isVideoUrl', () => {
+  it('returns true for supported video extensions', () => {
+    expect(isVideoUrl('/local/flowme-backgrounds/loop.mp4')).toBe(true);
+    expect(isVideoUrl('/local/bg.webm')).toBe(true);
+    expect(isVideoUrl('/local/bg.mov')).toBe(true);
+    expect(isVideoUrl('/local/bg.m4v')).toBe(true);
+  });
+
+  it('returns true for URLs with query params', () => {
+    expect(isVideoUrl('/local/bg.mp4?v=1')).toBe(true);
+  });
+
+  it('is case insensitive', () => {
+    expect(isVideoUrl('/local/BG.MP4')).toBe(true);
+    expect(isVideoUrl('/local/bg.Mp4')).toBe(true);
+  });
+
+  it('returns false for image extensions', () => {
+    expect(isVideoUrl('/local/bg.jpg')).toBe(false);
+    expect(isVideoUrl('/local/bg.png')).toBe(false);
+    expect(isVideoUrl('/local/bg.gif')).toBe(false);
+    expect(isVideoUrl('/local/bg.webp')).toBe(false);
+  });
+
+  it('returns false for empty string', () => {
+    expect(isVideoUrl('')).toBe(false);
+  });
+});
 
 describe('clamp', () => {
   it('returns the value when inside the range', () => {
