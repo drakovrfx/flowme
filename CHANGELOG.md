@@ -2,6 +2,12 @@
 
 All notable changes to flowme are documented here. Format loosely follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [2.11.1]
+
+### Changed
+
+- **HACS default store:** Restored the standard HACS validation GitHub Action on the repository (required for inclusion in hacs/default).
+
 ## [2.11.0]
 
 ### Added
