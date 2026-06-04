@@ -1420,7 +1420,7 @@ w.customCards.push({
   description:
     'Animated flow visualisation card for Home Assistant. Connect nodes with animated flows driven by sensor data.',
   preview: true,
-  documentationURL: 'https://github.com/fxgamer-debug/flowme',
+  documentationURL: 'https://github.com/drakovrfx/flowme',
 });
 
 // Bootstrap the editor element by side-effect so getConfigElement() works.

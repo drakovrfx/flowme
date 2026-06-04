@@ -11236,7 +11236,7 @@ wt.customCards.push({
   name: "FlowMe",
   description: "Animated flow visualisation card for Home Assistant. Connect nodes with animated flows driven by sensor data.",
   preview: !0,
-  documentationURL: "https://github.com/fxgamer-debug/flowme"
+  documentationURL: "https://github.com/drakovrfx/flowme"
 });
 export {
   V as FlowmeCard

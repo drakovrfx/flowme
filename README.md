@@ -106,7 +106,7 @@ FlowMe adapts to your Home Assistant theme automatically. For the strongest dyna
 
 FlowMe is submitted to the HACS default store. While awaiting approval, add it as a custom repository:
 
-1. In HACS → Custom repositories, add: `https://github.com/fxgamer-debug/flowme`  
+1. In HACS → Custom repositories, add: `https://github.com/drakovrfx/flowme`  
    Category: **Dashboard**
 
 2. Search for FlowMe and install the latest version (or download the latest release asset)
@@ -326,7 +326,7 @@ Node.js 20+, npm
 ### Setup
 
 ```bash
-git clone https://github.com/fxgamer-debug/flowme
+git clone https://github.com/drakovrfx/flowme
 cd flowme
 npm install
 ```

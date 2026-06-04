@@ -104,7 +104,7 @@ All notable changes to flowme are documented here. Format loosely follows [Keep 
 
 ### HACS submission
 
-After **Validate with HACS** is green on `main`, open a PR against [hacs/default](https://github.com/hacs/default): fork, branch from `master`, add `fxgamer-debug/flowme` to `plugin` alphabetically, submit with the template completed.
+After **Validate with HACS** is green on `main`, open a PR against [hacs/default](https://github.com/hacs/default): fork, branch from `master`, add `drakovrfx/flowme` to `plugin` alphabetically, submit with the template completed.
 
 ## [2.7.4]
 
@@ -2425,8 +2425,8 @@ From v1.0.0 onward, `main` is protected: all changes land via PR. The direct-to-
 - Overlay editor (v0.5.0).
 - Unit + integration tests (v1.0.0).
 
-[0.5.0]: https://github.com/fxgamer-debug/flowme/releases/tag/v0.5.0
-[0.4.0]: https://github.com/fxgamer-debug/flowme/releases/tag/v0.4.0
-[0.3.0]: https://github.com/fxgamer-debug/flowme/releases/tag/v0.3.0
-[0.2.0]: https://github.com/fxgamer-debug/flowme/releases/tag/v0.2.0
-[0.1.0]: https://github.com/fxgamer-debug/flowme/releases/tag/v0.1.0
+[0.5.0]: https://github.com/drakovrfx/flowme/releases/tag/v0.5.0
+[0.4.0]: https://github.com/drakovrfx/flowme/releases/tag/v0.4.0
+[0.3.0]: https://github.com/drakovrfx/flowme/releases/tag/v0.3.0
+[0.2.0]: https://github.com/drakovrfx/flowme/releases/tag/v0.2.0
+[0.1.0]: https://github.com/drakovrfx/flowme/releases/tag/v0.1.0
